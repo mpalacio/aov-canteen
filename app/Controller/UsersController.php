@@ -17,7 +17,10 @@ class UsersController extends AppController {
 			}
 			else
 				$this->Session->setFlash('Username not found.', 'error');
-
+		}
+		if($this->Auth->user()) {
+			$this->Session->setFlash('You are already logged in.', 'error');
+			$this->redirect('/');
 		}
 	}
 
