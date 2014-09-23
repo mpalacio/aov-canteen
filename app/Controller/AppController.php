@@ -37,4 +37,11 @@ class AppController extends Controller {
 	public function beforeRender(){
 		$this->set('auth', $this->Auth->user());
 	}
+
+	public function uniform_params($param, $allowed) {
+		$filtered_params = array();
+		foreach($allowed as $key)
+			$filtered_params[$key] = isset($param[$key]) ? $param[$key] : null;
+		return $filtered_params;
+	}
 }

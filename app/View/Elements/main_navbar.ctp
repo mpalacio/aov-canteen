@@ -1,7 +1,7 @@
 <?php
 	$current_page = isset($page) ? $page : null;
 	$pages = array(
-		array('action' => 'home', 'page' => 'POS'),
+		array('action' => 'pos', 'page' => 'POS'),
 		array('action' => 'inventory', 'page' => 'Inventory'),
 		array('action' => 'transactions', 'page' => 'Transactions')
 	);

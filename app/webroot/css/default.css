@@ -1,0 +1,84 @@
+.container {
+	margin-top: 20px;
+}
+
+#side-navbar {
+	padding: 15px;
+}
+
+#side-navbar ul {
+	display: table;
+	width: 100%;
+}
+
+.sub-page-navbar {
+	margin-bottom: 15px;
+}
+
+.sub-page-navbar a span {
+	font-size: 9pt;
+}
+
+.btn-icon {
+	display: table;
+	margin: auto;
+}
+
+.icon-stacked {
+	color: rgb(187, 179, 179);
+	margin-top: 5px;
+	margin-left: 15px;
+}
+
+form {
+	margin: 10px 0px;
+	padding: 10px 15px;
+	background-color: #F5F4F4;
+	border-color: #ddd;
+	border-width: 1px;
+	border-radius: 4px 4px 0 0;
+	border-style: solid;
+	-webkit-box-shadow: none;
+	box-shadow: none;
+}
+
+.form-horizontal .control-label {
+	font-size: 8pt;
+}
+
+.form-group.has-error p {
+	color: #eb6864;
+	font-size: 8pt;
+	margin-bottom: 5px;
+}
+
+.form-group.has-error p:first-of-type {
+	margin-top: 5px;
+}
+
+.form-group.has-error p:last-child {
+	margin-bottom: 0px;
+}
+
+form.form-inline h4 {
+	margin: 7px 15px 0 0;
+}
+
+.ajax-pagination {
+	margin: 0 0 10px 0;
+}
+
+.ajax-loader {
+	background: rgba(255, 255, 255, 0.8);
+	position: absolute;
+	width: 100%;
+	z-index: 10;
+	top: 0;
+	text-align: center;
+	min-height: 100%;
+}
+
+.ajax-loader .progress{
+	width: 50%;
+	margin: 50px auto;
+}
