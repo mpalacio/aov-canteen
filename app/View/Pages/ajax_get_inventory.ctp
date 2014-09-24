@@ -20,11 +20,11 @@
 			echo "<td>".$product['Product']['name']."</td>";
 			echo "<td>".$product['CurrentStock']['purchase_price']."</td>";
 			echo "<td>".$product['CurrentStock']['selling_price']."</td>";
-			echo "<td>".$product['CurrentStock']['available_count']."</td>";
+			echo "<td class='add-stock'>".$product['CurrentStock']['available_count']."</td>";
 			echo "<td>".$product['CurrentStock']['sold_count']."</td>";
-			echo "<td>".$product['CurrentStock']['total_count']."</td>";
+			echo "<td class='total-count'>".$product['CurrentStock']['total_count']."</td>";
 			echo "<td>".$product['CurrentStock']['price_date']."</td>";
-			echo "<td><a data-add-stock='{$product['Product']['id']}' title='Add Stocks'><i class='glyphicon glyphicon-plus'></i></a> <a data-delete='{$product['Product']['id']}' title='Delete Product'><i class='glyphicon glyphicon-trash'></i></a></td>";
+			echo "<td><a data-add-stock='{$product['CurrentStock']['id']}' title='Add Stocks'><i class='glyphicon glyphicon-plus'></i></a> <a data-delete='{$product['Product']['id']}' title='Delete Product'><i class='glyphicon glyphicon-trash'></i></a></td>";
 			echo "</tr>";
 		}
 	?>

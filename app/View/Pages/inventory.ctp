@@ -16,6 +16,30 @@
 	form .form-group p {
 		width: 172px;
 	}
+
+	#add-stock-form {
+		background: 0;
+		margin: 0;
+		padding: 0;
+		border: none;
+	}
+
+	#add-stock-form input[type="text"] {
+		display: inline;
+		width: 106px;
+	}
+
+	#add-stock-form input {
+		margin-right: 3px;
+	}
+
+	#add-stock-form .form-group {
+		margin-bottom: 5px;
+	}
+
+	#add-stock-form .form-group p {
+		width: 120px;
+	}
 </style>
 
 <h1>Inventory</h1>
@@ -60,6 +84,12 @@
 			return ((/^[1-9][0-9]*(|.[0-9]*)$/).test(e.val()) | e.val().length == 0);
 		}, "This field must be a number."
 	);
+	validate.add_rule(
+		'gt-old', function(e) {
+			console.log(e.data('old-stock'));
+			return (!(/^[1-9][0-9]*$/).test(e.val()) | e.val().length == 0 | e.val() > e.data('old-stock'));
+		}, "New stock must be greater than old stock."
+	);
 
 	$(function() {
 		var filter_form = $('#product-search-form');
@@ -68,6 +98,7 @@
 		add_form.validate(false);
 		get_inventory();
 		var filters;
+		var old_add_stock_html;
 
 		$('body').on('submit', '#product-search-form', function() {
 			get_inventory();
@@ -110,6 +141,7 @@
 			$.each(inputs, function (i, input) {
 				params[input.name] = input.value;
 			});
+			params['total_count'] = params['available_count'];
 			var t = $(this);
 			$.ajax({
 				url: '<?php echo $this->webroot; ?>pages/ajax_add_product',
@@ -117,7 +149,7 @@
 				data: params,
 				beforeSend: function() {
 					t.find('button').button('loading');
-					t.find('fieldset').attr('disabled');
+					t.find('fieldset').attr('disabled', 'disabled');
 				},
 				success: function (result) {
 					if(result == 'true') {
@@ -183,6 +215,60 @@
 					}
 				});
 			}
+		});
+
+		$('body').on('click', '[data-add-stock]', function() {
+			if(!$('#add-stock-form').length) {
+				var id = $(this).data('add-stock');
+				var e = $(this).closest('td').siblings('.add-stock');
+				var old_price = old_add_stock_html = e.text();
+				var form = '<form id="add-stock-form" data-id="' + id + '"><fieldset><div class="form-group"><input type="text" class="form-control input-sm new-stock-value" name="available_count" placeholder="New Stock" data-validate="required|number|gt-old" data-old-stock="' + old_price + '" value="' + old_price + '"></div><input type="submit" class="btn btn-primary btn-sm" value="Add" data-loading-text="Adding..."><button class="btn btn-primary btn-sm">Cancel</button></fieldset></form>';
+				e.html(form);
+				$('#add-stock-form').validate();
+			}
+			else {
+				show_alerts({alerts: get_alert('error', 'Add stock form is currently being used.')});
+			}
+		});
+
+		$('body').on('submit', '#add-stock-form', function() {
+			var t = $(this);
+			var params = {};
+			var inputs = t.serializeArray();
+			$.each(inputs, function (i, input) {
+				params[input.name] = input.value;
+			});
+			params['count'] = params['available_count'] - parseInt(t.find('input[type="text"]').data('old-stock'))
+			params['total_count'] = parseInt(t.closest('td').siblings('.total-count').text()) + params['count'];
+			params['id'] = t.data('id');
+			$.ajax({
+				url: '<?php echo $this->webroot; ?>pages/ajax_add_stock',
+				type: 'POST',
+				data: params,
+				beforeSend: function() {
+					t.find('input[type="submit"]').button('loading');
+					t.find('fieldset').attr('disabled');
+				},
+				success: function (result) {
+					result = JSON.parse(result);
+					if(result == 'Success') {
+						t.closest('.add-stock').siblings('.total-count').html(params['total_count']);
+						t.closest('.add-stock').html(params['available_count']);
+						show_alerts({alerts: get_alert('success', 'Stock successfully added.')});
+					}
+					else {
+						t.closest('.add-stock').html(old_add_stock_html);
+						show_alerts({alerts: get_alert('error', 'Stock haven\'t added.')});
+						console.log(result);
+					}
+				}
+			});
+			return false;
+		});
+
+		$('body').on('click', '#add-stock-form button', function() {
+			$(this).closest('.add-stock').html(old_add_stock_html);
+			return false;
 		});
 	});
 </script>

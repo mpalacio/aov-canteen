@@ -84,7 +84,7 @@ class PagesController extends AppController {
 	}
 
 	public function ajax_add_product() {
-		$allowed = array('name', 'purchase_price', 'selling_price', 'available_count', 'notes');
+		$allowed = array('name', 'purchase_price', 'selling_price', 'available_count', 'total_count', 'notes');
 		$params = $this->uniform_params($this->request->data, $allowed);
 		$this->Product->recursive = 0;
 		$product = $this->Product->findByName($params['name']);
@@ -130,6 +130,28 @@ class PagesController extends AppController {
 			else {
 				$this->set('data', 'Sold');
 			}
+		}
+		else
+			$this->set('data', 'Invalid');
+		$this->layout = 'ajax';
+		$this->render('/Elements/serialize_json');
+	}
+
+	public function ajax_add_stock() {
+		$allowed = array('id', 'available_count', 'total_count');
+		$new_stock = $this->request->data['count'];
+		$params = $this->uniform_params($this->request->data, $allowed);
+		if($this->Stock->save($params)) {
+			$this->Transaction->create();
+			$transaction = array('Transaction' => array(
+				'date' => date('Y-m-d h:i:s'),
+				'type' => 'add_stock',
+				'stock_id' => $params['id'],
+				'count' => $new_stock,
+				'customer_id' => $this->Auth->User('id')
+			));
+			$this->Transaction->save($transaction);
+			$this->set('data', 'Success');
 		}
 		else
 			$this->set('data', 'Invalid');
