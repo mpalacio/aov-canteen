@@ -140,7 +140,37 @@ $.fn.validate = function() {
 var ajax_loader = '<div class="ajax-loader"><div class="progress"><div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div></div></div>';
 
 $(function() {
+	remove_alerts();
+});
+
+function get_alert(type, msg) {
+	alert_text = type.toLowerCase().replace(/\b[a-z]/g, function(letter) {
+		return letter.toUpperCase();
+	});
+	type = type == 'error' ? 'danger' : type;
+	return '<div class="alert alert-' + type + ' alert-dismissible"><button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button><strong>' + alert_text + '!</strong> ' + msg + '</div>';
+}
+
+function show_alerts(params) {
+	$('.alert').remove();
+	if(!isset(params.anchor)) {
+		params.anchor = '#alert-container';
+	}
+	if(!isset(params.insert_type)) {
+		params.insert_type = 'html';
+	}
+	$(params.anchor)[params.insert_type](params.alerts);
+	remove_alerts();
+}
+
+function remove_alerts() {
 	$(".alert").fadeTo(2000, 500).slideUp(2000, function(){
 		$(".alert").alert('close');
 	});
-});
+}
+
+function isset(e) {
+	if(typeof(e) != "undefined" && e !== null)
+		return true;
+	return false;
+}

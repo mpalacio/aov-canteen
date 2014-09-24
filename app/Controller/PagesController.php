@@ -107,6 +107,36 @@ class PagesController extends AppController {
 		$this->render('/Elements/serialize_json');
 	}
 
+	public function ajax_delete_product() {
+		$allowed = array('id');
+		$params = $this->uniform_params($this->request->data, $allowed);
+		$this->Product->recursive = 2;
+		$this->Product->unbindModel(array('hasOne' => array('CurrentStock')));
+		$this->Product->Stock->unbindModel(array('hasMany' => array('Transaction'), 'belongsTo' => array('Product')));
+		$product = $this->Product->findById($params['id']);
+		if($product) {
+			$sold = false;
+			foreach ($product['Stock'] as $stock) {
+				if($stock['sold_count'] > 0) {
+					$sold = true;
+					break;
+				}
+			}
+			if(!$sold) {
+				$this->Product->delete($params['id']);
+				$this->Stock->deleteAll(array('product_id' => $params['id']));
+				$this->set('data', 'Success');
+			}
+			else {
+				$this->set('data', 'Sold');
+			}
+		}
+		else
+			$this->set('data', 'Invalid');
+		$this->layout = 'ajax';
+		$this->render('/Elements/serialize_json');
+	}
+
 	private function transactions() {
 	}
 }

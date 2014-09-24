@@ -1,6 +1,11 @@
 <style type="text/css">
 	#inventory {
 		position: relative;
+		min-height: 120px;
+	}
+
+	#inventory tr td a {
+		margin-right: 5px;
 	}
 
 	form .form-group {
@@ -70,7 +75,6 @@
 		})
 
 		$('body').on('click', '.ajax-pagination a', function() {
-			$this = $(this);
 			page_url = $(this).attr('href');
 			if(page_url != null) {
 				var params = {};
@@ -149,5 +153,36 @@
 				}
 			});
 		}
+
+		$('body').on('click', '[data-delete]', function() {
+			var id = $(this).data('delete');
+			if(confirm('Are you sure you want to delete this product?')) {
+				$.ajax({
+					url: '<?php echo $this->webroot; ?>pages/ajax_delete_product',
+					type: 'POST',
+					data: {id: id},
+					beforeSend: function() {
+						$('#inventory').append(ajax_loader);
+					},
+					success: function (result) {
+						result = JSON.parse(result);
+						$('.ajax-loader').remove();
+						if(result == 'Success') {
+							get_inventory();
+							show_alerts({alerts: get_alert('success', 'Product deleted.')});
+						}
+						else if(result == 'Sold') {
+							show_alerts({alerts: get_alert('error', 'Products already sold cannot be deleted.')});
+						}
+						else if(result == 'Invalid') {
+							show_alerts({alerts: get_alert('error', 'Invalid product id.')});
+						}
+						else {
+							console.log(result);
+						}
+					}
+				});
+			}
+		});
 	});
 </script>

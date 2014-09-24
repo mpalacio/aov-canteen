@@ -28,7 +28,7 @@
 		</div>
 		<div id="content" class="row">
 			<div class="col-md-12"><?php echo $this->element('main_navbar'); ?></div>
-			<div class="col-md-8 col-md-offset-2">
+			<div class="col-md-8 col-md-offset-2" id="alert-container">
 				<?php echo $this->Session->flash(); ?>
 			</div>
 			<div class="col-md-12">
