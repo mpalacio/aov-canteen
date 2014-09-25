@@ -29,7 +29,8 @@ SET time_zone = "+00:00";
 CREATE TABLE IF NOT EXISTS `products` (
   `id` int(20) NOT NULL AUTO_INCREMENT,
   `name` varchar(100) NOT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `name` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
@@ -41,12 +42,12 @@ CREATE TABLE IF NOT EXISTS `products` (
 CREATE TABLE IF NOT EXISTS `stocks` (
   `id` int(20) NOT NULL AUTO_INCREMENT,
   `product_id` int(20) NOT NULL,
-  `price_date` date NOT NULL,
+  `price_date` datetime NOT NULL,
   `purchase_price` float NOT NULL,
   `selling_price` float NOT NULL,
   `total_count` int(20) NOT NULL,
   `available_count` int(20) NOT NULL,
-  `sold_count` int(20) NOT NULL,
+  `sold_count` int(20) NOT NULL DEFAULT '0',
   `notes` varchar(250) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `product_id` (`product_id`),
@@ -61,13 +62,16 @@ CREATE TABLE IF NOT EXISTS `stocks` (
 
 CREATE TABLE IF NOT EXISTS `transactions` (
   `id` int(20) NOT NULL AUTO_INCREMENT,
-  `date` date NOT NULL,
+  `date` datetime NOT NULL,
   `type` varchar(50) NOT NULL,
   `stock_id` int(20) NOT NULL,
   `count` int(20) NOT NULL,
   `customer_id` int(20) NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `date` (`date`,`type`,`stock_id`,`customer_id`)
+  KEY `type` (`type`),
+  KEY `stock_id` (`stock_id`),
+  KEY `customer_id` (`customer_id`),
+  KEY `date` (`date`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
@@ -78,7 +82,7 @@ CREATE TABLE IF NOT EXISTS `transactions` (
 
 CREATE TABLE IF NOT EXISTS `users` (
   `id` int(20) NOT NULL AUTO_INCREMENT,
-  `username` varchar(50) NOT NULL,
+  `username` varchar(20) NOT NULL,
   `password` varchar(100) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`username`)

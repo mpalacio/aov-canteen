@@ -28,13 +28,16 @@ SET time_zone = "+00:00";
 
 CREATE TABLE IF NOT EXISTS `transactions` (
   `id` int(20) NOT NULL AUTO_INCREMENT,
-  `date` date NOT NULL,
+  `date` datetime NOT NULL,
   `type` varchar(50) NOT NULL,
   `stock_id` int(20) NOT NULL,
   `count` int(20) NOT NULL,
   `customer_id` int(20) NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `date` (`date`,`type`,`stock_id`,`customer_id`)
+  KEY `type` (`type`),
+  KEY `stock_id` (`stock_id`),
+  KEY `customer_id` (`customer_id`),
+  KEY `date` (`date`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
