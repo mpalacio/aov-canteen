@@ -6,7 +6,8 @@
 		public $hasMany = array(
 			'Stock' => array(
 				'className' => 'Stock',
-				'foreignKey' => 'product_id'
+				'foreignKey' => 'product_id',
+				'dependent' => true
 			)
 		);
 
@@ -15,7 +16,8 @@
 				'className' => 'Stock',
 				'type' => 'inner',
 				'foreignKey' => 'product_id',
-				'order' => array('product_id ASC', 'price_date DESC')
+				'order' => array('product_id ASC', 'price_date DESC'),
+				'dependent' => true
 			)
 		);
 	}

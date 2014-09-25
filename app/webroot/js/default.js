@@ -118,16 +118,16 @@ var validate = (function() {
 })();
 
 $.fn.validate = function() {
-	$(this).find(validate.tag_selector).each(function() {
+	this.find(validate.tag_selector).each(function() {
 		validate.check($(this));
 	});
 
-	$('body').on('change focusout', validate.tag_selector, function() {
+	this.on('change focusout', validate.tag_selector, function() {
 		var t = $(this), rules = (t.data('validate')).split('|');
 		validate.run(rules, t);
 	});
 
-	$('body').on('focusin', validate.tag_selector, function() {
+	this.on('focusin', validate.tag_selector, function() {
 		var t = $(this);
 		validate.clean_field(t);
 	});

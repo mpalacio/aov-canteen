@@ -13,7 +13,8 @@
 		public $hasMany = array(
 			'Transaction' => array(
 				'className' => 'Transaction',
-				'foreignKey' => 'stock_id'
+				'foreignKey' => 'stock_id',
+				'dependent' => true
 			)
 		);
 	}

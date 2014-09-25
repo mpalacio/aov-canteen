@@ -96,6 +96,15 @@ class PagesController extends AppController {
 			$params['price_date'] = date('Y-m-d h:i:s');
 			$this->Stock->create();
 			$this->Stock->save(array('Stock' => $params));
+			$this->Transaction->create();
+			$transaction = array('Transaction' => array(
+				'date' => date('Y-m-d h:i:s'),
+				'type' => 'new_stock',
+				'stock_id' => $this->Stock->id,
+				'count' => $params['available_count'],
+				'customer_id' => $this->Auth->User('id')
+			));
+			$this->Transaction->save($transaction);
 			$save = true;
 		}
 		else {
@@ -123,8 +132,7 @@ class PagesController extends AppController {
 				}
 			}
 			if(!$sold) {
-				$this->Product->delete($params['id']);
-				$this->Stock->deleteAll(array('product_id' => $params['id']));
+				$this->Product->delete($params['id'], true);
 				$this->set('data', 'Success');
 			}
 			else {
@@ -155,6 +163,36 @@ class PagesController extends AppController {
 		}
 		else
 			$this->set('data', 'Invalid');
+		$this->layout = 'ajax';
+		$this->render('/Elements/serialize_json');
+	}
+
+	public function ajax_add_new_price() {
+		$allowed = array('product_id', 'available_count', 'purchase_price', 'selling_price');
+		$old_purchase_price = $this->request->data['old_purchase_price'];
+		$old_selling_price = $this->request->data['old_selling_price'];
+		$params = $this->uniform_params($this->request->data, $allowed);
+		if($params['purchase_price'] != $old_purchase_price | $params['selling_price'] != $old_selling_price) {
+			$this->Stock->create();
+			$params['price_date'] = date('Y-m-d h:i:s');
+			$params['total_count'] = $params['available_count'];
+			if($this->Stock->save($params)) {
+				$this->Transaction->create();
+				$transaction = array('Transaction' => array(
+					'date' => date('Y-m-d h:i:s'),
+					'type' => 'new_stock',
+					'stock_id' => $this->Stock->id,
+					'count' => $params['available_count'],
+					'customer_id' => $this->Auth->User('id')
+				));
+				$this->Transaction->save($transaction);
+				$this->set('data', array('success' => true, 'price_date' => $params['price_date']));
+			}
+			else
+				$this->set('data', array('success' => false));
+		}
+		else
+				$this->set('data', array('success' => false));
 		$this->layout = 'ajax';
 		$this->render('/Elements/serialize_json');
 	}
