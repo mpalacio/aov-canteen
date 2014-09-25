@@ -4,8 +4,24 @@
 		min-height: 120px;
 	}
 
-	#inventory tr td a {
-		margin-right: 5px;
+	#inventory tr td:nth-child(1) {
+		width: 50px;
+	}
+
+	#inventory tr th:nth-child(3),
+	#inventory tr th:nth-child(4),
+	#inventory tr th:nth-child(5),
+	#inventory tr th:nth-child(6),
+	#inventory tr th:nth-child(7) {
+		width: 130px;
+	}
+
+	#inventory tr th:nth-child(8) {
+		width: 160px;
+	}
+
+	#inventory tr th:nth-child(9) {
+		width: 100px;
 	}
 
 	#inventory tr td a.disabled,
@@ -50,12 +66,16 @@
 
 	#new-price-form .form-group {
 		float: left;
-		margin-right: 25px;
+		margin-right: 20px;
+	}
+
+	#new-price-form .form-group:last-of-type {
+		margin-right: 0;
 	}
 
 	#add-stock-form .form-group p,
 	#new-price-form .form-group p {
-		width: 120px;
+		width: 100px;
 	}
 </style>
 
@@ -79,7 +99,7 @@
 		<?php
 			$inputs = array(
 				'name' => array('label-class' => 'sr-only', 'name' => 'Product Name', 'input-type' => 'text', 'attributes' => array('data-validate' => 'required')),
-				'purchase_price' => array('label-class' => 'sr-only', 'name' => 'Original Price', 'input-type' => 'text', 'attributes' => array('data-validate' => 'required|money')),
+				'purchase_price' => array('label-class' => 'sr-only', 'name' => 'Purchase Price', 'input-type' => 'text', 'attributes' => array('data-validate' => 'required|money')),
 				'selling_price' => array('label-class' => 'sr-only', 'name' => 'Selling Price', 'input-type' => 'text', 'attributes' => array('data-validate' => 'required|money')),
 				'available_count' => array('label-class' => 'sr-only', 'name' => 'Stock Count', 'input-type' => 'text', 'attributes' => array('data-validate' => 'required|number')),
 				'notes' => array('label-class' => 'sr-only', 'name' => 'Notes', 'input-type' => 'text', 'attributes' => array())
@@ -308,7 +328,7 @@
 			var available_count_content = $(this).closest('tr').find('td:nth-child(5)');
 			old_content = purchase_price_content[0].outerHTML + selling_price_content[0].outerHTML + available_count_content[0].outerHTML;
 			var form =
-				'<td colspan="3" style="width: 384px;">\
+				'<td colspan="3" style="width: 390px;">\
 					<form id="new-price-form" data-id="' + id + '">\
 						<fieldset>\
 							<div class="form-group">\
@@ -320,8 +340,7 @@
 							<div class="form-group">\
 								<input type="text" class="form-control input-sm" name="available_count" placeholder="Stock Count" data-validate="required|number">\
 							</div>\
-							<input type="submit" class="btn btn-primary btn-sm" value="Save" data-loading-text="Saving...">\
-							<button class="btn btn-primary btn-sm">Cancel</button>\
+							<input type="submit" class="btn btn-primary btn-sm" value="Save" data-loading-text="Saving..."><button class="btn btn-primary btn-sm">Cancel</button>\
 						</fieldset>\
 					</form>\
 				</td>';

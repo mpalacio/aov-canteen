@@ -68,7 +68,7 @@ class PagesController extends AppController {
 
 		$options = array(
 			'limit' => 10,
-			'fields' => array('MAX(CurrentStock.price_date) AS current_price_date', '*'),
+			'fields' => array('MAX(CurrentStock.price_date) AS current_price_date', 'SUM(CurrentStock.sold_count) AS total_sold', '*'),
 			'conditions' => array('OR' => $use_filters),
 			'group' => 'Product.id'
 		);
