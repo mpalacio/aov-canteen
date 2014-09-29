@@ -119,6 +119,7 @@
 		</fieldset>
 	</form>
 </div>
+<div id="price-history-container"></div>
 
 <script type="text/javascript">
 	validate.add_rule(
@@ -133,7 +134,6 @@
 	);
 	validate.add_rule(
 		'gt-old', function(e) {
-			console.log(e.data('old-stock'));
 			return (!(/^[0-9]*$/).test(e.val()) | e.val().length == 0 | e.val() > e.data('old-stock'));
 		}, "New stock must be greater than old stock."
 	);
@@ -148,7 +148,8 @@
 		var filters;
 		var old_add_stock_html;
 		var old_content;
-		var inventory_content;
+		var price_history_container = $('#price-history-container');
+		var price_histories = {};
 
 		$('body').on('submit', '#product-search-form', function() {
 			get_inventory();
@@ -187,7 +188,7 @@
 
 		$('body').on('submit', '#add-product-form', function() {
 			var params = {};
-			var inputs = add_form.serializeArray();
+			var inputs = $('#add-product-form').serializeArray();
 			$.each(inputs, function (i, input) {
 				params[input.name] = input.value;
 			});
@@ -207,7 +208,7 @@
 						get_inventory();
 					}
 					else {
-						validate.set_error(add_form.find('[name="name"]'), '<p>Product already exist.</p>');
+						validate.set_error($('#add-product-form').find('[name="name"]'), '<p>Product already exist.</p>');
 					}
 					t.find('button').button('reset');
 					t.find('fieldset').removeAttr('disabled');
@@ -218,7 +219,7 @@
 
 		function get_inventory() {
 			var params = {};
-			var inputs = filter_form.serializeArray();
+			var inputs = $('#product-search-form').serializeArray();
 			$.each(inputs, function (i, input) {
 				params[input.name] = input.value;
 			});
@@ -273,9 +274,10 @@
 			$('[data-new-price]').addClass('disabled');
 			if(!$('#add-stock-form').length) {
 				var id = $(this).data('add-stock');
+				var product_id = $(this).data('product-id');
 				var e = $(this).closest('td').siblings('.add-stock');
 				var old_price = old_add_stock_html = e.text();
-				var form = '<form id="add-stock-form" data-id="' + id + '"><fieldset><div class="form-group"><input type="text" class="form-control input-sm" name="available_count" placeholder="New Stock" data-validate="required|number|gt-old" data-old-stock="' + old_price + '" value="' + old_price + '"></div><input type="submit" class="btn btn-primary btn-sm" value="Add" data-loading-text="Adding..."><button class="btn btn-primary btn-sm">Cancel</button></fieldset></form>';
+				var form = '<form id="add-stock-form" data-id="' + id + '" data-product-id="' + product_id + '"><fieldset><div class="form-group"><input type="text" class="form-control input-sm" name="available_count" placeholder="New Stock" data-validate="required|number|gt-old" data-old-stock="' + old_price + '" value="' + old_price + '"></div><input type="submit" class="btn btn-primary btn-sm" value="Add" data-loading-text="Adding..."><button class="btn btn-primary btn-sm">Cancel</button></fieldset></form>';
 				e.html(form);
 				$('#add-stock-form').validate();
 			}
@@ -294,6 +296,7 @@
 			params['count'] = params['available_count'] - parseInt(t.find('input[type="text"]').data('old-stock'))
 			params['total_count'] = parseInt(t.closest('td').siblings('.total-count').text()) + params['count'];
 			params['id'] = t.data('id');
+			product_id = t.data('product-id');
 			$.ajax({
 				url: '<?php echo $this->webroot; ?>pages/ajax_add_stock',
 				type: 'POST',
@@ -305,6 +308,7 @@
 				success: function (result) {
 					result = JSON.parse(result);
 					if(result == 'Success') {
+						delete price_histories[product_id];
 						t.closest('.add-stock').siblings('.total-count').html(params['total_count']).siblings('td').find('a[data-new-price]').data('disabled', true).attr('data-disabled', true);
 						t.closest('.add-stock').html(params['available_count']);
 						show_alerts({alerts: get_alert('success', 'Stock successfully added.')});
@@ -383,6 +387,7 @@
 				success: function (result) {
 					result = JSON.parse(result);
 					if(result['success']) {
+						delete price_histories[params.product_id];
 						var td = t.closest('td');
 						var tr = t.closest('tr');
 						td.next('td').text(0).next('td').text(params['available_count']).next('td').text(result['price_date']).next('td').find('a[data-new-price]').data('disabled', true).attr('data-disabled', true);
@@ -412,26 +417,35 @@
 		});
 
 		$('body').on('click', '[data-price-history]', function() {
-			inventory_content = inventory_container.html();
 			var t = $(this);
 			params = {};
 			params.id = t.data('price-history');
 			params.name = t.data('name');
-			$.ajax({
-				url: '<?php echo $this->webroot; ?>pages/ajax_get_price_history',
-				type: 'POST',
-				data: params,
-				beforeSend: function() {
-					inventory_container.append(ajax_loader);
-				},
-				success: function (result) {
-					inventory_container.html(result);
-				}
-			});
+			if(!isset(price_histories[params.id])) {
+				$.ajax({
+					url: '<?php echo $this->webroot; ?>pages/ajax_get_price_history',
+					type: 'POST',
+					data: params,
+					beforeSend: function() {
+						inventory_container.append(ajax_loader);
+					},
+					success: function (result) {
+						$('.ajax-loader').remove();
+						inventory_container.hide();
+						price_history_container.html(result).show();
+						price_histories[params.id] = result;
+					}
+				});
+			}
+			else {
+				inventory_container.hide();
+				price_history_container.html(price_histories[params.id]).show();
+			}
 		});
 
 		$('body').on('click', '#close-price-history', function() {
-			$('#inventory-container').html(inventory_content);
+			inventory_container.show();
+			price_history_container.hide();
 		});
 	});
 </script>
