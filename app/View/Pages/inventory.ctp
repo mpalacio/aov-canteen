@@ -1,4 +1,8 @@
 <style type="text/css">
+	#inventory-container {
+		position: relative;
+	}
+
 	#inventory {
 		position: relative;
 		min-height: 120px;
@@ -77,38 +81,44 @@
 	#new-price-form .form-group p {
 		width: 100px;
 	}
+
+	#close-price-history {
+		margin-top: -5px;
+	}
 </style>
 
 <h1>Inventory</h1>
-<form id="product-search-form" class="form-inline">
-	<h4 class="pull-left">Search</h4>
-	<?php
-		$inputs = array(
-			'id' => array('label-class' => 'sr-only', 'name' => 'Product ID', 'input-type' => 'text', 'attributes' => array('data-validate' => 'number')),
-			'name' => array('label-class' => 'sr-only', 'name' => 'Product Name', 'input-type' => 'text', 'attributes' => array()),
-			'available_count' => array('label-class' => 'sr-only', 'name' => 'Stock Availability', 'input-type' => 'select', 'attributes' => array(), 'options' => array('' => 'Stock Availability', 1 => 'With Available Stocks', 2 => 'Empty Stocks'))
-		);
-		echo $this->element('inline_form', array('inputs' => $inputs, 'params' => (isset($params) ? $params : array()), 'errors' => (isset($errors) ? $errors : array())));
-	?>
-	<button class="btn btn-primary btn-sm">Search</button>
-</form>
-<div id="inventory"></div>
-<form id="add-product-form" class="form-inline">
-	<fieldset>
-		<h4 class="pull-left">Add Product</h4>
+<div id="inventory-container">
+	<form id="product-search-form" class="form-inline">
+		<h4 class="pull-left">Search</h4>
 		<?php
 			$inputs = array(
-				'name' => array('label-class' => 'sr-only', 'name' => 'Product Name', 'input-type' => 'text', 'attributes' => array('data-validate' => 'required')),
-				'purchase_price' => array('label-class' => 'sr-only', 'name' => 'Purchase Price', 'input-type' => 'text', 'attributes' => array('data-validate' => 'required|money')),
-				'selling_price' => array('label-class' => 'sr-only', 'name' => 'Selling Price', 'input-type' => 'text', 'attributes' => array('data-validate' => 'required|money')),
-				'available_count' => array('label-class' => 'sr-only', 'name' => 'Stock Count', 'input-type' => 'text', 'attributes' => array('data-validate' => 'required|number')),
-				'notes' => array('label-class' => 'sr-only', 'name' => 'Notes', 'input-type' => 'text', 'attributes' => array())
+				'id' => array('label-class' => 'sr-only', 'name' => 'Product ID', 'input-type' => 'text', 'attributes' => array('data-validate' => 'number')),
+				'name' => array('label-class' => 'sr-only', 'name' => 'Product Name', 'input-type' => 'text', 'attributes' => array()),
+				'available_count' => array('label-class' => 'sr-only', 'name' => 'Stock Availability', 'input-type' => 'select', 'attributes' => array(), 'options' => array('' => 'Stock Availability', 1 => 'With Available Stocks', 2 => 'Empty Stocks'))
 			);
 			echo $this->element('inline_form', array('inputs' => $inputs, 'params' => (isset($params) ? $params : array()), 'errors' => (isset($errors) ? $errors : array())));
 		?>
-		<button class="btn btn-primary btn-sm" data-loading-text="Adding...">Add Product</button>
-	</fieldset>
-</form>
+		<button class="btn btn-primary btn-sm">Search</button>
+	</form>
+	<div id="inventory"></div>
+	<form id="add-product-form" class="form-inline">
+		<fieldset>
+			<h4 class="pull-left">Add Product</h4>
+			<?php
+				$inputs = array(
+					'name' => array('label-class' => 'sr-only', 'name' => 'Product Name', 'input-type' => 'text', 'attributes' => array('data-validate' => 'required')),
+					'purchase_price' => array('label-class' => 'sr-only', 'name' => 'Purchase Price', 'input-type' => 'text', 'attributes' => array('data-validate' => 'required|money')),
+					'selling_price' => array('label-class' => 'sr-only', 'name' => 'Selling Price', 'input-type' => 'text', 'attributes' => array('data-validate' => 'required|money')),
+					'available_count' => array('label-class' => 'sr-only', 'name' => 'Stock Count', 'input-type' => 'text', 'attributes' => array('data-validate' => 'required|number')),
+					'notes' => array('label-class' => 'sr-only', 'name' => 'Notes', 'input-type' => 'text', 'attributes' => array())
+				);
+				echo $this->element('inline_form', array('inputs' => $inputs, 'params' => (isset($params) ? $params : array()), 'errors' => (isset($errors) ? $errors : array())));
+			?>
+			<button class="btn btn-primary btn-sm" data-loading-text="Adding...">Add Product</button>
+		</fieldset>
+	</form>
+</div>
 
 <script type="text/javascript">
 	validate.add_rule(
@@ -129,6 +139,7 @@
 	);
 
 	$(function() {
+		var inventory_container = $('#inventory-container');
 		var filter_form = $('#product-search-form');
 		filter_form.validate();
 		var add_form = $('#add-product-form');
@@ -137,6 +148,7 @@
 		var filters;
 		var old_add_stock_html;
 		var old_content;
+		var inventory_content;
 
 		$('body').on('submit', '#product-search-form', function() {
 			get_inventory();
@@ -397,6 +409,29 @@
 			$('[data-new-price]').removeClass('disabled');
 			$(this).closest('td').replaceWith(old_content);
 			return false;
+		});
+
+		$('body').on('click', '[data-price-history]', function() {
+			inventory_content = inventory_container.html();
+			var t = $(this);
+			params = {};
+			params.id = t.data('price-history');
+			params.name = t.data('name');
+			$.ajax({
+				url: '<?php echo $this->webroot; ?>pages/ajax_get_price_history',
+				type: 'POST',
+				data: params,
+				beforeSend: function() {
+					inventory_container.append(ajax_loader);
+				},
+				success: function (result) {
+					inventory_container.html(result);
+				}
+			});
+		});
+
+		$('body').on('click', '#close-price-history', function() {
+			$('#inventory-container').html(inventory_content);
 		});
 	});
 </script>

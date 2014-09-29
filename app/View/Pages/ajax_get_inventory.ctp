@@ -28,6 +28,7 @@
 				<a data-add-stock='{$product['CurrentStock']['id']}' title='Add Stocks'><i class='glyphicon glyphicon-plus'></i></a>
 				<a data-delete='{$product['Product']['id']}' title='Delete Product' data-disabled='".($product['CurrentStock']['sold_count'] > 0 | $product[0]['total_sold'] > 0 ? "true" : "false")."'><i class='glyphicon glyphicon-trash'></i></a>
 				<a data-new-price='{$product['Product']['id']}' title='New Price' data-disabled='".($product['CurrentStock']['available_count'] > 0 ? "true" : "false")."'><i class='glyphicon glyphicon-edit'></i></a>
+				<a data-price-history='{$product['Product']['id']}' data-name='{$product['Product']['name']}' title='Price History' ><i class='glyphicon glyphicon-signal'></i></a>
 			</td>";
 			echo "</tr>";
 		}

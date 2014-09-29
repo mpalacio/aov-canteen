@@ -197,6 +197,15 @@ class PagesController extends AppController {
 		$this->render('/Elements/serialize_json');
 	}
 
+	public function ajax_get_price_history() {
+		$allowed = array('id', 'name');
+		$params = $this->uniform_params($this->request->data, $allowed);
+		$this->Stock->recursive = 0;
+		$stocks = $this->Stock->find('all', array('conditions' => array('product_id' => $params['id']), 'order' => 'price_date desc'));
+		$this->set(compact('stocks', 'params'));
+		$this->layout = 'ajax';
+	}
+
 	private function transactions() {
 	}
 }
