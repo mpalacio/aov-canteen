@@ -208,4 +208,50 @@ class PagesController extends AppController {
 
 	private function transactions() {
 	}
+
+	public function ajax_get_transactions() {
+		$allowed = array('name', 'type');
+		$params = $this->uniform_params($this->request->data, $allowed);
+		$filters = array(
+			'type' => array('Transaction.type' => $params['type']),
+			'name' => array('Product.name' => $params['name'])
+		);
+		$use_filters = array();
+		foreach ($params as $key => $value) {
+			if(trim($value) != '') {
+				if($key == 'available_count')
+					array_push($use_filters, $filters[$value]);
+				else
+					array_push($use_filters, $filters[$key]);
+			}
+		}
+
+		$allowed = array('sort', 'direction', 'page');
+		$params = $this->uniform_params($this->request->data, $allowed);
+		foreach ($params as $key => $value)
+			if($value == null)
+				unset($params[$key]);
+
+		$options = array(
+			'limit' => 10,
+			'conditions' => array('OR' => $use_filters),
+			'order' => 'Transaction.date desc',
+			'joins' => array(
+				array(
+					'table' => 'products',
+					'alias' => 'Product',
+					'conditions' => array('Stock.product_id = Product.id')
+				)
+			)
+		);
+		$options['order'] = isset($params['sort']) ? $params['sort'] : $options['order'];
+		unset($params['sort']);
+		$this->paginate = array_merge($params, $options);
+
+		$this->Transaction->recursive = 2;
+		$this->set('page', (isset($params['page']) ? $params['page'] : 1));
+		$transactions = $this->paginate('Transaction');
+		$this->set(compact('transactions'));
+		$this->layout = 'ajax';
+	}
 }

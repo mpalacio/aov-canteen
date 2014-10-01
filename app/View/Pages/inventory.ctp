@@ -144,7 +144,7 @@
 		filter_form.validate();
 		var add_form = $('#add-product-form');
 		add_form.validate();
-		get_inventory();
+		get_inventory({});
 		var filters;
 		var old_add_stock_html;
 		var old_content;
@@ -152,9 +152,15 @@
 		var price_histories = {};
 
 		$('body').on('submit', '#product-search-form', function() {
-			get_inventory();
+			var params = {};
+			var inputs = $('#product-search-form').serializeArray();
+			$.each(inputs, function (i, input) {
+				params[input.name] = input.value;
+			});
+			filters = params;
+			get_inventory(params);
 			return false;
-		})
+		});
 
 		$('body').on('click', '.ajax-pagination a', function() {
 			page_url = $(this).attr('href');
@@ -171,17 +177,7 @@
 					if(value != '')
 						params[key] = value;
 				});
-				$.ajax({
-					url: '<?php echo $this->webroot; ?>pages/ajax_get_inventory',
-					type: 'POST',
-					data: params,
-					beforeSend: function() {
-						$('#inventory').append(ajax_loader);
-					},
-					success: function (result) {
-						$('#inventory').html(result);
-					}
-				});
+				get_inventory(params);
 			}
 			return false;
 		});
@@ -217,13 +213,7 @@
 			return false;
 		});
 
-		function get_inventory() {
-			var params = {};
-			var inputs = $('#product-search-form').serializeArray();
-			$.each(inputs, function (i, input) {
-				params[input.name] = input.value;
-			});
-			filters = params;
+		function get_inventory(params) {
 			$.ajax({
 				url: '<?php echo $this->webroot; ?>pages/ajax_get_inventory',
 				type: 'POST',
