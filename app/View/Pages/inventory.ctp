@@ -41,7 +41,7 @@
 	}
 
 	form .form-group p {
-		width: 172px;
+		width: 168px;
 	}
 
 	#add-stock-form,

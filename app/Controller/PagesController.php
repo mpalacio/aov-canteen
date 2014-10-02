@@ -80,7 +80,7 @@ class PagesController extends AppController {
 			$this->Stock->save(array(
 				'id' => $transaction['stock_id'],
 				'available_count' => $transaction['available_count'] - $transaction['count'],
-				'sold_count ' => $transaction['sold_count'] + $transaction['count']
+				'sold_count' => $transaction['sold_count'] + $transaction['count']
 			));
 		}
 		$this->Transaction->saveAll($transactions);
@@ -307,5 +307,17 @@ class PagesController extends AppController {
 	}
 
 	private function sales() {
+		$this->Transaction->recursive = 2;
+		$transactions = $this->Transaction->find('all', array(
+			'joins' => array(
+				array(
+					'table' => 'products',
+					'alias' => 'Product',
+					'conditions' => array('Stock.product_id = Product.id')
+				)
+			),
+			'order' => array('Transaction.date ASC')
+		));
+		$this->set(compact('transactions'));
 	}
 }
