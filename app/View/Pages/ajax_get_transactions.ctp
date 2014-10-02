@@ -21,7 +21,7 @@
 					$type = $history['type'];
 					if($type == 'new_stock' | $type == 'add_stock')
 						$current_total += $history['count'];
-					elseif ($type == 'add_stock')
+					elseif ($type == 'purchase_product')
 						$current_total -= $history['count'];
 				}
 			}

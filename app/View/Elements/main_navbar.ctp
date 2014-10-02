@@ -3,7 +3,8 @@
 	$pages = array(
 		array('action' => 'pos', 'page' => 'POS'),
 		array('action' => 'inventory', 'page' => 'Inventory'),
-		array('action' => 'transactions', 'page' => 'Transactions')
+		array('action' => 'transactions', 'page' => 'Transactions'),
+		array('action' => 'sales', 'page' => 'Sales')
 	);
 ?>
 <ul class="nav nav-pills">

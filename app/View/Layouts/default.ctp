@@ -12,7 +12,10 @@
 		echo $this->Html->css('bootstrap.min');
 		echo $this->Html->css('bootstrap-theme.min');
 		echo $this->Html->css('default');
+		echo $this->Html->css('jquery-ui.structure.min');
+		echo $this->Html->css('jquery-ui.theme.min');
 		echo $this->Html->script('jquery-2.1.1.min');
+		echo $this->Html->script('jquery-ui.min');
 		echo $this->Html->script('bootstrap.min');
 		echo $this->Html->script('default');
 

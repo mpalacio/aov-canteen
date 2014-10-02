@@ -38,6 +38,57 @@ class PagesController extends AppController {
 	private function pos() {
 	}
 
+	public function ajax_get_products() {
+		$this->Product->recursive = 0;
+		$products = $this->Product->find('all');
+		$names = array();
+		foreach ($products as $product)
+			array_push($names, $product['Product']['name']);
+		$this->set('data', $names);
+		$this->layout = 'ajax';
+		$this->render('/Elements/serialize_json');
+	}
+
+	public function ajax_get_product() {
+		$allowed = array('name');
+		$params = $this->uniform_params($this->request->data, $allowed);
+
+		$this->Product->recursive = 2;
+		$this->Product->unbindModel(array('hasMany' => array('Stock')));
+		$this->Product->CurrentStock->unbindModel(array('hasMany' => array('Transaction'), 'belongsTo' => array('Product')));
+		$product = $this->Product->find('first', array('conditions' => $params));
+		if($product)
+			$this->set('data', $product);
+		else
+			$this->set('data', 'not found');
+
+		$this->layout = 'ajax';
+		$this->render('/Elements/serialize_json');
+	}
+
+	public function ajax_process_sales() {
+		$params = $this->request->data;
+		$transactions = array();
+		foreach ($params as $transaction) {
+			array_push($transactions, array(
+				'date' => date('Y-m-d h:i:s'),
+				'type' => 'purchase_product',
+				'stock_id' => $transaction['stock_id'],
+				'count' => $transaction['count'],
+				'customer_id' => 1
+			));
+			$this->Stock->save(array(
+				'id' => $transaction['stock_id'],
+				'available_count' => $transaction['available_count'] - $transaction['count'],
+				'sold_count ' => $transaction['sold_count'] + $transaction['count']
+			));
+		}
+		$this->Transaction->saveAll($transactions);
+		$this->set('data', 'true');
+		$this->layout = 'ajax';
+		$this->render('/Elements/serialize_json');
+	}
+
 	private function inventory() {
 	}
 
@@ -253,5 +304,8 @@ class PagesController extends AppController {
 		$transactions = $this->paginate('Transaction');
 		$this->set(compact('transactions'));
 		$this->layout = 'ajax';
+	}
+
+	private function sales() {
 	}
 }

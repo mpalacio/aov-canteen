@@ -182,6 +182,20 @@
 			return false;
 		});
 
+		function get_inventory(params) {
+			$.ajax({
+				url: '<?php echo $this->webroot; ?>pages/ajax_get_inventory',
+				type: 'POST',
+				data: params,
+				beforeSend: function() {
+					$('#inventory').append(ajax_loader);
+				},
+				success: function (result) {
+					$('#inventory').html(result);
+				}
+			});
+		}
+
 		$('body').on('submit', '#add-product-form', function() {
 			var params = {};
 			var inputs = $('#add-product-form').serializeArray();
@@ -212,20 +226,6 @@
 			});
 			return false;
 		});
-
-		function get_inventory(params) {
-			$.ajax({
-				url: '<?php echo $this->webroot; ?>pages/ajax_get_inventory',
-				type: 'POST',
-				data: params,
-				beforeSend: function() {
-					$('#inventory').append(ajax_loader);
-				},
-				success: function (result) {
-					$('#inventory').html(result);
-				}
-			});
-		}
 
 		$('body').on('click', '[data-delete]:not(.disabled):not([data-disabled="true"])', function() {
 			var id = $(this).data('delete');
