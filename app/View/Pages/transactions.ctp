@@ -8,21 +8,14 @@
 		min-height: 120px;
 	}
 
-	#transaction tr td:nth-child(1) {
-		width: 50px;
-	}
-
-	#transaction tr th:nth-child(3),
-	#transaction tr th:nth-child(4),
-	#transaction tr th:nth-child(5),
-	#transaction tr th:nth-child(7),
-	#transaction tr th:nth-child(8) {
-		width: 120px;
-	}
-
-	#transaction tr th:nth-child(6),
-	#transaction tr th:nth-child(9) {
-		width: 160px;
+	#transaction tr td:nth-child(1),
+	#transaction tr td:nth-child(3),
+	#transaction tr td:nth-child(5),
+	#transaction tr td:nth-child(6),
+	#transaction tr td:nth-child(7),
+	#transaction tr td:nth-child(11),
+	#transaction tr td:nth-child(8) {
+		width: 70px;
 	}
 
 	form .form-group {

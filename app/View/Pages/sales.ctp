@@ -6,7 +6,7 @@
 		<th title="Product ID">PID</th>
 		<th title="Product Name">Name</th>
 		<th title="Stock ID">SID</th>
-		<th title="Stock Date">SDate</th>
+		<th title="Stock Price Date">SPDate</th>
 		<th title="Stock Quantity">SQty</th>
 		<th title="Purchase Price">PP</th>
 		<th title="Selling Price">SP</th>

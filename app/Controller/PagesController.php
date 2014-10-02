@@ -118,7 +118,7 @@ class PagesController extends AppController {
 				unset($params[$key]);
 
 		$options = array(
-			'limit' => 10,
+			'limit' => 30,
 			'fields' => array('MAX(CurrentStock.price_date) AS current_price_date', 'SUM(CurrentStock.sold_count) AS total_sold', '*'),
 			'conditions' => array('OR' => $use_filters),
 			'group' => 'Product.id'
@@ -284,7 +284,7 @@ class PagesController extends AppController {
 				unset($params[$key]);
 
 		$options = array(
-			'limit' => 10,
+			'limit' => 30,
 			'conditions' => array('OR' => $use_filters),
 			'order' => 'Transaction.date desc',
 			'joins' => array(
