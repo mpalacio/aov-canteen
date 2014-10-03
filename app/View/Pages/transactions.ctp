@@ -50,7 +50,7 @@
 		var filter_form = $('#transaction-search-form');
 		filter_form.validate();
 		get_transaction({});
-		var filters;
+		var filters = {};
 
 		$('body').on('submit', '#transaction-search-form', function() {
 			var params = {};

@@ -145,7 +145,7 @@
 		var add_form = $('#add-product-form');
 		add_form.validate();
 		get_inventory({});
-		var filters;
+		var filters = {};
 		var old_add_stock_html;
 		var old_content;
 		var price_history_container = $('#price-history-container');
