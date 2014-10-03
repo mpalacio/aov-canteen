@@ -295,8 +295,6 @@ class PagesController extends AppController {
 				)
 			)
 		);
-		$options['order'] = isset($params['sort']) ? $params['sort'] : $options['order'];
-		unset($params['sort']);
 		$this->paginate = array_merge($params, $options);
 
 		$this->Transaction->recursive = 2;
